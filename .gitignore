@@ -1,0 +1,19 @@
+# ROS2 Build artifacts
+build/
+install/
+log/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Heavy model weights and artifacts
+*.pth
+*.pt
+*.onnx
+*.engine
+
+# IDEs and logs
+.vscode/
+lka_logs/
+.DS_Store
