@@ -107,7 +107,11 @@ class CarMakerCompleteInterface(Node):
         self.wheelfr = Quantity("Car.WheelSpd_FR", Quantity.FLOAT)
         self.wheelrl = Quantity("Car.WheelSpd_RL", Quantity.FLOAT)
         self.wheelrr = Quantity("Car.WheelSpd_RR", Quantity.FLOAT)
-        for q in [self.velocity, self.wheelfl, self.wheelfr, self.wheelrl, self.wheelrr]: self.cm.subscribe(q)
+        
+        self.q_sroad = Quantity("Car.Road.sRoad", Quantity.FLOAT)
+        self.q_troad = Quantity("Car.Road.tRoad", Quantity.FLOAT)
+        
+        for q in [self.velocity, self.wheelfl, self.wheelfr, self.wheelrl, self.wheelrr, self.q_sroad, self.q_troad]: self.cm.subscribe(q)
 
         self.cm.read()  # Initial read to populate values
         self.get_logger().info("📊 All CarMaker quantities subscribed.")
@@ -126,6 +130,8 @@ class CarMakerCompleteInterface(Node):
         self.aeb_dist_pub = self.create_publisher(Float32, '/aeb/distance', 10)
         self.aeb_closing_pub = self.create_publisher(Float32, '/aeb/closing_speed', 10)
         self.aeb_ego_pub = self.create_publisher(Float32, '/aeb/ego_speed', 10)
+        self.sroad_pub = self.create_publisher(Float32, '/endurance/sRoad', 10)
+        self.troad_pub = self.create_publisher(Float32, '/endurance/tRoad', 10)
 
     def init_subscribers(self):
         self.control_sub = self.create_subscription(
@@ -177,6 +183,9 @@ class CarMakerCompleteInterface(Node):
             self.aeb_dist_pub.publish(Float32(data=float(best_dist)))
             self.aeb_closing_pub.publish(Float32(data=float(closing_speed)))
             self.aeb_ego_pub.publish(Float32(data=float(current_speed_kmh)))
+            
+            self.sroad_pub.publish(Float32(data=float(safe_float(self.q_sroad))))
+            self.troad_pub.publish(Float32(data=float(safe_float(self.q_troad))))
 
             # --- End AEB Radar logic ---
 
